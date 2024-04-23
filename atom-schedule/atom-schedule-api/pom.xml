@@ -15,8 +15,19 @@
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<kubernetes.client.version>5.12.1</kubernetes.client.version>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>cn.lampup</groupId>
+			<artifactId>atom-service-operator-entity</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.lampup</groupId>
+			<artifactId>atom-service-space-entity</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -26,6 +37,11 @@
 			<groupId>cn.lampup</groupId>
 			<artifactId>atom-service-operator-entity</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>io.fabric8</groupId>
+			<artifactId>kubernetes-client</artifactId>
+			<version>${kubernetes.client.version}</version>
 		</dependency>
 	</dependencies>
 </project>

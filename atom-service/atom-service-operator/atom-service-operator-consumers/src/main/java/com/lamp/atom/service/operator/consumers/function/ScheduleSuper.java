@@ -30,24 +30,23 @@ import com.lamp.atom.schedule.core.AtomScheduleService;
 import lombok.Setter;
 
 /**
- * 1. 从本地读取配置 2. 从nacos读取配置 3.
+ * 1. 从本地读取配置 2. 从nacos读取配置
  * 
  * @author laohu
  *
  */
 @Component
-@ConfigurationProperties(prefix="atom.schedule")
 public class ScheduleSuper implements BeanFactoryAware {
-
-	private BeanFactory beanFactory;
-
-	@Setter
-	private OperatorScheduleConfig operatorScheduleConfig = new OperatorScheduleConfig();
-
-	private AtomScheduleService atomScheduleService;
 
 	@Autowired
 	private ApplicationContext appContext;
+
+	private BeanFactory beanFactory;
+
+	@Autowired
+	private OperatorScheduleConfig operatorScheduleConfig;
+
+	private AtomScheduleService atomScheduleService;
 
 	@PostConstruct
 	private void init() throws Exception {

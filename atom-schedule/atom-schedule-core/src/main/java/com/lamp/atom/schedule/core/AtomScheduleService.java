@@ -11,12 +11,12 @@
  */
 package com.lamp.atom.schedule.core;
 
-import com.lamp.atom.schedule.api.AtomOperatorShedule;
-import com.lamp.atom.schedule.api.AtomServiceShedule;
+import com.lamp.atom.schedule.api.AtomOperatorSchedule;
+import com.lamp.atom.schedule.api.AtomServiceSchedule;
 import com.lamp.atom.schedule.api.Schedule;
 import com.lamp.atom.schedule.api.ScheduleReturn;
 import com.lamp.atom.schedule.api.config.OperatorScheduleConfig;
-import com.lamp.atom.schedule.python.operator.kubernetes.OperatorKubernetesSchedule;
+import com.lamp.atom.schedule.k8s.operator.OperatorKubernetesSchedule;
 import com.lamp.atom.schedule.python.operator.rpc.OperatorRpcSchedule;
 import com.lamp.atom.service.domain.OperatorRuntimeType;
 
@@ -28,17 +28,15 @@ import java.util.Map;
  * @author laohu
  *
  */
-public class AtomScheduleService implements AtomOperatorShedule, AtomServiceShedule {
+public class AtomScheduleService implements AtomOperatorSchedule, AtomServiceSchedule {
 
-	
 	private OperatorKubernetesSchedule kubernetesSchedule;
 	
 	private OperatorRpcSchedule rpcSchedule;
 	
 	private OperatorScheduleConfig operatorScheduleConfig;
 
-
-	private Map<OperatorRuntimeType,AtomOperatorShedule> atomOperatorScheduleMap = new HashMap<>();
+	private Map<OperatorRuntimeType, AtomOperatorSchedule> atomOperatorScheduleMap = new HashMap<>();
 
 	public AtomScheduleService(OperatorScheduleConfig operatorScheduleConfig) throws Exception {
 		this.operatorScheduleConfig = operatorScheduleConfig;
@@ -51,7 +49,6 @@ public class AtomScheduleService implements AtomOperatorShedule, AtomServiceShed
 		atomOperatorScheduleMap.put(OperatorRuntimeType.TRAIN, rpcSchedule);
 		//推理算子
 		atomOperatorScheduleMap.put(OperatorRuntimeType.REASON, kubernetesSchedule);
-
 	}
 	
 	
@@ -65,25 +62,31 @@ public class AtomScheduleService implements AtomOperatorShedule, AtomServiceShed
 		kubernetesSchedule.closeService(schedule);
 	}
 
+	/**
+	 * 1、训练 =》 k8s调度
+	 * 2、推理 =》 RPC调度
+	 *
+ 	 * @param schedule
+	 * @return
+	 */
 	@Override
 	public ScheduleReturn createOperators(Schedule schedule) {
-		// 1、训练 =》 k8s调度；2、推理 =》 RPC调度
 		return atomOperatorScheduleMap.get(schedule.getOperatorRuntimeType()).createOperators(schedule);
 	}
 
 	@Override
 	public void startOperators(Schedule schedule) {
-		rpcSchedule.startOperators(schedule);
+		atomOperatorScheduleMap.get(schedule.getOperatorRuntimeType()).startOperators(schedule);
 	}
 
 	@Override
 	public void suspendOperators(Schedule schedule) {
-		rpcSchedule.suspendOperators(schedule);
+		atomOperatorScheduleMap.get(schedule.getOperatorRuntimeType()).suspendOperators(schedule);
 	}
 
 	@Override
 	public void uninstallOperators(Schedule schedule) {
-		rpcSchedule.uninstallOperators(schedule);
+		atomOperatorScheduleMap.get(schedule.getOperatorRuntimeType()).uninstallOperators(schedule);
 	}
 
 }
